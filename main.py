@@ -25,6 +25,11 @@ def listen_for_command():
         engine.say("Unable to recognize speech")
         engine.runAndWait()
         return None
+    except Exception as e:
+        print("An error occurred:", str(e))
+        engine.say("An error occurred")
+        engine.runAndWait()
+        return None
 
 # Main program loop
 while True:
@@ -37,6 +42,10 @@ while True:
             object_label = command.split()[1]
             engine.say(f"Searching for object: {object_label}")
             engine.runAndWait()
+        elif command.startswith("obstacle detected"):
+        object_label = command.split()[1]
+        engine.say(f"Obstacle detected in the path")
+        engine.runAndWait()
         else:
             engine.say("Invalid command.")
             engine.runAndWait()
