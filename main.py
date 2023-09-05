@@ -3,7 +3,7 @@ import speech_recognition as sr
 import spacy
 from plyer import vibrator
 import pyautogui
-
+import time
 
 # Initialize spaCy
 nlp = spacy.load("en_core_web_sm")
@@ -34,15 +34,15 @@ def extract_subject_object(command):
     return subject, obj
 
 # Function to provide haptic feedback
-def provide_haptic_feedback():
-    pyautogui.move(1, 1)
+def provide_haptic_feedback(duration):
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        pyautogui.move(1, 1)
+        pyautogui.move(-1, -1)
 
 # Function to extract keywords from a command
 def extract_keywords(command):
-    # Split the command into words
     words = command.split()
-    
-    # Filter out common words (e.g., "get", "for", "the", "and", etc.)
     common_words = ["get", "for", "the", "and", "with", "on", "in", "to"]
     keywords = [word for word in words if word.lower() not in common_words]
     
@@ -90,20 +90,19 @@ while True:
                  
 
             engine.say("Environment scan completed")
-            engine.runAndWait()
-            # provide_haptic_feedback()   
+            engine.runAndWait()   
         elif command.startswith("get"):
             object_label = command.split()[1]
             engine.say(f"Searching for object: {object_label}")
             engine.runAndWait()
-            entities = extract_entities(command)
-            # provide_haptic_feedback()   
+            entities = extract_entities(command) 
             keywords = extract_keywords(command)
             print("Keywords:", keywords)
         elif command.startswith("obstacle detected"):
             engine.say(f"Obstacle detected in the path")
-            engine.runAndWait()
-            # provide_haptic_feedback()   
+            engine.runAndWait()            
+            # provide_haptic_feedback(duration=2.0)
+
         else:
             engine.say("Invalid command.")
             engine.runAndWait()
