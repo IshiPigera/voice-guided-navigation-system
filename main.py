@@ -4,6 +4,7 @@ import spacy
 from plyer import vibrator
 import pyautogui
 import time
+import subprocess
 
 # Initialize spaCy
 nlp = spacy.load("en_core_web_sm")
@@ -14,6 +15,16 @@ r = sr.Recognizer()
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 engine.setProperty("rate", 150)
+
+adb_path = r'C:\Android\platform-tools\adb.exe'
+# Function to vibrate the connected Android device using ADB
+def vibrate_phone():
+    try:
+        subprocess.run([adb_path, "shell", "input", "keyevent", "KEYCODE_NUMPAD_ENTER"])
+        print("Phone vibrating...")
+    except Exception as e:
+        print("Error while vibrating the phone:", str(e))
+
 
 # Function to extract entities from a command
 def extract_entities(command):
@@ -102,6 +113,7 @@ while True:
             engine.say(f"Obstacle detected in the path")
             engine.runAndWait()            
             # provide_haptic_feedback(duration=2.0)
+            vibrate_phone()
 
         else:
             engine.say("Invalid command.")
