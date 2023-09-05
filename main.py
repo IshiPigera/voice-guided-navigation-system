@@ -4,6 +4,7 @@ import spacy
 from plyer import vibrator
 import pyautogui
 
+
 # Initialize spaCy
 nlp = spacy.load("en_core_web_sm")
 
@@ -14,9 +15,26 @@ r = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty("rate", 150)
 
+# Function to extract entities from a command
+def extract_entities(command):
+    doc = nlp(command)
+    entities = [(ent.text, ent.label_) for ent in doc.ents]
+    return entities
+
+# Function to extract subject and object from a command
+def extract_subject_object(command):
+    doc = nlp(command)
+    subject = None
+    obj = None
+    for token in doc:
+        if "subj" in token.dep_:
+            subject = token.text
+        elif "obj" in token.dep_:
+            obj = token.text
+    return subject, obj
+
 # Function to provide haptic feedback
 def provide_haptic_feedback():
-    # vibrator.vibrate(0.1)
     pyautogui.move(1, 1)
 
 # Function to extract keywords from a command
@@ -60,22 +78,32 @@ def listen_for_command():
 while True:
     command = listen_for_command()
     if command:
-        if command == "scan":
+        if "scan" in command:
             engine.say("Starting environment scan")
+            progress = 0
+
+            while progress < 100:
+                 
+                progress += 10
+                engine.say(f"Scan progress: {progress}%")
+                engine.runAndWait()
+                 
+
+            engine.say("Environment scan completed")
             engine.runAndWait()
-            provide_haptic_feedback()  # Provide haptic feedback for scan
+            # provide_haptic_feedback()   
         elif command.startswith("get"):
             object_label = command.split()[1]
             engine.say(f"Searching for object: {object_label}")
             engine.runAndWait()
-            provide_haptic_feedback()  # Provide haptic feedback for object search
-            # Extract keywords from the command
+            entities = extract_entities(command)
+            # provide_haptic_feedback()   
             keywords = extract_keywords(command)
             print("Keywords:", keywords)
         elif command.startswith("obstacle detected"):
             engine.say(f"Obstacle detected in the path")
             engine.runAndWait()
-            provide_haptic_feedback()  # Provide haptic feedback for obstacle detection
+            # provide_haptic_feedback()   
         else:
             engine.say("Invalid command.")
             engine.runAndWait()
