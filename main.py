@@ -17,11 +17,11 @@ engine = pyttsx3.init()
 engine.setProperty("rate", 150)
 
 adb_path = r'C:\Android\platform-tools\adb.exe'
-# Function to vibrate the connected Android device using ADB
 def vibrate_phone():
     try:
-        subprocess.run([adb_path, "shell", "input", "keyevent", "KEYCODE_NUMPAD_ENTER"])
         print("Phone vibrating...")
+        subprocess.run([adb_path, "shell", "input", "keyevent", "KEYCODE_NUMPAD_ENTER"])
+         
     except Exception as e:
         print("Error while vibrating the phone:", str(e))
 
@@ -109,7 +109,7 @@ while True:
             entities = extract_entities(command) 
             keywords = extract_keywords(command)
             print("Keywords:", keywords)
-        elif command.startswith("obstacle detected"):
+        elif command.startswith("obstacle"):
             engine.say(f"Obstacle detected in the path")
             engine.runAndWait()            
             # provide_haptic_feedback(duration=2.0)
